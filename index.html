@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horario de Comidas - Carol Yepes 🍽️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.1) 10px,
+                rgba(255, 255, 255, 0.1) 20px
+            );
+            animation: slide 20s linear infinite;
+        }
+
+        @keyframes slide {
+            0% { transform: translateX(-50px) translateY(-50px); }
+            100% { transform: translateX(50px) translateY(50px); }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .motivation-quote {
+            font-style: italic;
+            font-size: 1.1em;
+            margin-top: 10px;
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 30px;
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .schedule-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            height: fit-content;
+        }
+
+        .recipes-section {
+            display: grid;
+            gap: 25px;
+        }
+
+        .meal-category {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .meal-category:hover {
+            transform: translateY(-3px);
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            border-radius: 2px;
+        }
+
+        .day-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #ff6b6b;
+            transition: all 0.3s ease;
+        }
+
+        .day-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transform: translateX(5px);
+        }
+
+        .day-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .work-hours {
+            background: #e3f2fd;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            color: #1976d2;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .meal-time {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            padding: 6px;
+            background: #f0f8ff;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+
+        .meal-time:hover {
+            background: #e6f3ff;
+        }
+
+        .meal-icon {
+            font-size: 1.2em;
+            margin-right: 8px;
+            width: 25px;
+        }
+
+        .meal-info {
+            flex: 1;
+        }
+
+        .meal-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .meal-hour {
+            color: #666;
+            font-size: 0.8em;
+        }
+
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .recipe-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 5px solid #4caf50;
+        }
+
+        .recipe-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .recipe-item.lunch {
+            border-left-color: #ff9800;
+        }
+
+        .recipe-item.dinner {
+            border-left-color: #9c27b0;
+        }
+
+        .recipe-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4caf50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .recipe-name.lunch {
+            color: #ff9800;
+        }
+
+        .recipe-name.dinner {
+            color: #9c27b0;
+        }
+
+        .ingredients {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .instructions {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #444;
+        }
+
+        .benefits {
+            background: #e8f5e8;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: #2e7d32;
+        }
+
+        .benefits.lunch {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .benefits.dinner {
+            background: #f3e5f5;
+            color: #6a1b9a;
+        }
+
+        .day-off {
+            border-left-color: #9c27b0;
+        }
+
+        .day-off .day-name {
+            color: #9c27b0;
+        }
+
+        .breakfast-title {
+            color: #4caf50;
+        }
+
+        .lunch-title {
+            color: #ff9800;
+        }
+
+        .dinner-title {
+            color: #9c27b0;
+        }
+
+        .breakfast-title::after {
+            background: linear-gradient(45deg, #4caf50, #81c784);
+        }
+
+        .lunch-title::after {
+            background: linear-gradient(45deg, #ff9800, #ffb74d);
+        }
+
+        .dinner-title::after {
+            background: linear-gradient(45deg, #9c27b0, #ba68c8);
+        }
+
+        @media (max-width: 1200px) {
+            .content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .recipes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .recipe-item {
+                padding: 15px;
+            }
+        }
+
+        .inspiration-note {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #ffebee, #e8eaf6);
+            border-radius: 10px;
+            margin: 15px 0;
+            font-style: italic;
+            color: #555;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .inspiration-note::before {
+            content: '"';
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            font-size: 30px;
+            color: rgba(0,0,0,0.1);
+        }
+        
+        .inspiration-note::after {
+            content: '"';
+            position: absolute;
+            bottom: 5px;
+            right: 10px;
+            font-size: 30px;
+            color: rgba(0,0,0,0.1);
+        }
+
+        .closing-motivation {
+            text-align: center;
+            background: linear-gradient(135deg, #e0f7fa, #e8f5e9);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .closing-motivation h3 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .closing-motivation p {
+            color: #555;
+            margin: 10px 0;
+            font-style: italic;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍽️ Plan Nutricional de Carol Yepes</h1>
+            <p>Alimentación balanceada para una semana perfecta</p>
+            <p class="motivation-quote">✨ "Recuerda, las tenistas lindas comen bien. ¡Tú puedes, flaca!" ✨</p>
+        </div>
+        
+        <div class="content">
+            <div class="schedule-section">
+                <h2 class="section-title">📅 Tu Horario</h2>
+                
+                <div class="day-card">
+                    <div class="day-name">🌅 LUN</div>
+                    <div class="work-hours">6:00-3:30</div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🥐</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Desayuno</div>
+                            <div class="meal-hour">5:15 AM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🍽️</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Almuerzo</div>
+                            <div class="meal-hour">4:00 PM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🌙</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Cena</div>
+                            <div class="meal-hour">7:30 PM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <div class="day-name">🌅 MAR</div>
+                    <div class="work-hours">6:00-1:30</div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🥐</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Desayuno</div>
+                            <div class="meal-hour">5:15 AM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🍽️</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Almuerzo</div>
+                            <div class="meal-hour">2:30 PM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🌙</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Cena</div>
+                            <div class="meal-hour">7:00 PM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="day-card day-off">
+                    <div class="day-name">🏖️ MIÉ</div>
+                    <div class="work-hours" style="background: #f3e5f5; color: #7b1fa2;">Día libre</div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🥐</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Desayuno</div>
+                            <div class="meal-hour">8:30 AM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🍽️</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Almuerzo</div>
+                            <div class="meal-hour">1:00 PM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🌙</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Cena</div>
+                            <div class="meal-hour">7:30 PM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="day-card day-off">
+                    <div class="day-name">🏖️ JUE</div>
+                    <div class="work-hours" style="background: #f3e5f5; color: #7b1fa2;">Día libre</div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🥐</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Desayuno</div>
+                            <div class="meal-hour">8:30 AM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🍽️</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Almuerzo</div>
+                            <div class="meal-hour">1:00 PM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🌙</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Cena</div>
+                            <div class="meal-hour">7:30 PM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <div class="day-name">🌅 VIE</div>
+                    <div class="work-hours">6:00-1:30</div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🥐</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Desayuno</div>
+                            <div class="meal-hour">5:15 AM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🍽️</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Almuerzo</div>
+                            <div class="meal-hour">2:30 PM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🌙</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Cena</div>
+                            <div class="meal-hour">7:00 PM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <div class="day-name">🌆 SÁB</div>
+                    <div class="work-hours">12:00-10:00</div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🥐</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Desayuno</div>
+                            <div class="meal-hour">10:00 AM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🍽️</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Almuerzo</div>
+                            <div class="meal-hour">11:00 AM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🌙</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Cena</div>
+                            <div class="meal-hour">10:30 PM</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="day-card">
+                    <div class="day-name">🌆 DOM</div>
+                    <div class="work-hours">11:30-9:00</div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🥐</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Desayuno</div>
+                            <div class="meal-hour">9:30 AM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🍽️</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Almuerzo</div>
+                            <div class="meal-hour">10:30 AM</div>
+                        </div>
+                    </div>
+                    <div class="meal-time">
+                        <div class="meal-icon">🌙</div>
+                        <div class="meal-info">
+                            <div class="meal-name">Cena</div>
+                            <div class="meal-hour">9:30 PM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recipes-section">
+                <div class="meal-category">
+                    <h2 class="section-title breakfast-title">🥣 Desayunos para Carol</h2>
+                    <div class="inspiration-note">
+                        "Un desayuno completo es el secreto de las campeonas. ¡Arranca el día con energía, bella!"
+                    </div>
+                    <div class="recipes-grid">
+                        <div class="recipe-item">
+                            <div class="recipe-name">🥣 Bowl de Avena Power</div>
+                            <div class="ingredients">
+                                • 1/2 taza de avena integral<br>
+                                • 1 taza de leche (vegetal o animal)<br>
+                                • 1/2 plátano en rodajas<br>
+                                • 1 cucharada de mantequilla de maní<br>
+                                • 1 cucharadita de miel<br>
+                                • Puñado de nueces picadas
+                            </div>
+                            <div class="instructions">
+                                <strong>Preparación:</strong> Cocina la avena con leche por 5 min. Agrega el plátano, mantequilla de maní y miel. Decora con nueces.
+                            </div>
+                            <div class="benefits">
+                                💪 Energía sostenida para las mañanas largas. Rica en fibra y proteínas.
+                            </div>
+                        </div>
+
+                        <div class="recipe-item">
+                            <div class="recipe-name">🍳 Huevos Revueltos Gourmet</div>
+                            <div class="ingredients">
+                                • 2 huevos orgánicos<br>
+                                • 1/4 taza de espinacas frescas<br>
+                                • 3-4 tomates cherry<br>
+                                • 1 rebanada de pan integral<br>
+                                • 1/4 aguacate<br>
+                                • Queso bajo en grasa
+                            </div>
+                            <div class="instructions">
+                                <strong>Preparación:</strong> Bate los huevos, cocina con las verduras. Tuesta el pan y sirve con aguacate. ¡Listo en 5 minutos!
+                            </div>
+                            <div class="benefits">
+                                🥚 Proteínas completas y vitaminas para comenzar el día con fuerza.
+                            </div>
+                        </div>
+
+                        <div class="recipe-item">
+                            <div class="recipe-name">🥤 Smoothie Verde Carol</div>
+                            <div class="ingredients">
+                                • 1 taza de espinacas baby<br>
+                                • 1/2 plátano congelado<br>
+                                • 1/2 manzana verde<br>
+                                • 1 taza de leche de almendras<br>
+                                • 1 cda de semillas de chía<br>
+                                • Pizca de jengibre
+                            </div>
+                            <div class="instructions">
+                                <strong>Preparación:</strong> Licúa todos los ingredientes hasta obtener consistencia cremosa. Puedes prepararlo la noche anterior.
+                            </div>
+                            <div class="benefits">
+                                🌱 Antioxidantes y energía natural. Perfecto para llevar al trabajo.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meal-category">
+                    <h2 class="section-title lunch-title">🍽️ Almuerzos Nutritivos</h2>
+                    <div class="inspiration-note">
+                        "Cada bocado te acerca a tus metas. Las tenistas más fuertes comen bien y brillan en la cancha. ¡Tú también!"
+                    </div>
+                    <div class="recipes-grid">
+                        <div class="recipe-item lunch">
+                            <div class="recipe-name lunch">🥗 Ensalada Carol's Power</div>
+                            <div class="ingredients">
+                                • 2 tazas de lechuga mixta<br>
+                                • 1 pechuga de pollo asada<br>
+                                • 1/2 taza de quinoa cocida<br>
+                                • 1/2 aguacate en cubos<br>
+                                • Tomates cherry y pepino<br>
+                                • Aderezo de limón y aceite de oliva
+                            </div>
+                            <div class="instructions">
+                                <strong>Preparación:</strong> Mezcla todos los vegetales, agrega el pollo desmenuzado y la quinoa. Aliña con limón, aceite de oliva, sal y pimienta.
+                            </div>
+                            <div class="benefits lunch">
+                                🥗 Proteínas magras y carbohidratos complejos para mantener la energía.
+                            </div>
+                        </div>
+
+                        <div class="recipe-item lunch">
+                            <div class="recipe-name lunch">🍲 Bowl Mediterráneo</div>
+                            <div class="ingredients">
+                                • 1 taza de arroz integral<br>
+                                • 1/2 taza de garbanzos<br>
+                                • Vegetales asados (calabacín, pimentón)<br>
+                                • Queso feta desmenuzado<br>
+                                • Aceitunas negras<br>
+                                • Hummus casero
+                            </div>
+                            <div class="instructions">
+                                <strong>Preparación:</strong> Cocina el arroz, asa los vegetales con hierbas. Arma el bowl con todos los ingredientes y sirve con hummus.
+                            </div>
+                            <div class="benefits lunch">
+                                🌊 Grasas saludables del mediterráneo y fibra para la digestión.
+                            </div>
+                        </div>
+
+                        <div class="recipe-item lunch">
+                            <div class="recipe-name lunch">🐟 Salmón con Vegetales</div>
+                            <div class="ingredients">
+                                • 1 filete de salmón (150g)<br>
+                                • Brócoli y zanahorias<br>
+                                • 1/2 taza de batata asada<br>
+                                • Espárragos frescos<br>
+                                • Hierbas finas (eneldo, perejil)<br>
+                                • Limón y aceite de oliva
+                            </div>
+                            <div class="instructions">
+                                <strong>Preparación:</strong> Hornea el salmón con limón por 15 min. Saltea los vegetales y asa la batata. Sirve todo junto con hierbas frescas.
+                            </div>
+                            <div class="benefits lunch">
+                                🐟 Omega-3 para el cerebro y proteínas de alta calidad.
+                            </div>
+                        </div>
+
+                        <div class="recipe-item lunch">
+                            <div class="recipe-name lunch">🌯 Wrap de Atún Fresco</div>
+                            <div class="ingredients">
+                                • 1 tortilla integral grande<br>
+                                • 1 lata de atún en agua<br>
+                                • Vegetales frescos (lechuga, tomate)<br>
+                                • 1/4 aguacate<br>
+                                • Yogur griego natural<br>
+                                • Mostaza Dijon
+                            </div>
+                            <div class="instructions">
+                                <strong>Preparación:</strong> Mezcla el atún con yogur y mostaza. Arma el wrap con vegetales y aguacate. Enrolla firmemente y corta por la mitad.
+                            </div>
+                            <div class="benefits lunch">
+                                🌯 Comida práctica y balanceada, rica en proteínas magras.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meal-category">
+                    <h2 class="section-title dinner-title">🌙 Cenas Reconfortantes</h2>
+                    <div class="inspiration-note">
+                        "Una cena balanceada es tu mejor aliada para descansar como una reina. ¡Sigue así, hermosa!"
+                    </div>
+                    <div class="recipes-grid">
+                        <div class="recipe-item dinner">
+                            <div class="recipe-name dinner">🍜 Sopa de Verduras Carol</div>
+                            <div class="ingredients">
+                                • Caldo de vegetales casero<br>
+                                • Zanahoria, apio, cebolla<br>
+                                • Calabaza y calabacín<br>
+                                • Lentejas rojas<br>
+                                • Espinacas frescas<br>
+                                • Hierbas aromáticas
+                            </div>
+                            <div class="instructions">
+                                <strong>Preparación:</strong> Sofríe las verduras, agrega el caldo y las lentejas. Cocina 20 min hasta que esté tierno. Agrega espinacas al final.
+                            </div>
+                            <div class="benefits dinner">
+                                🍜 Reconfortante y nutritiva, perfecta para las noches después del trabajo.
+                            </div>
+                        </div>
+
+                        <div class="recipe-item dinner">
+                            <div class="recipe-name dinner">🍗 Pollo al Horno Jugoso</div>
+                            <div class="ingredients">
+                                • Muslos de pollo sin piel<br>
+                                • Papas pequeñas<br>
+                                • Cebolla y ajo<br>
+                                • Hierbas provenzales<br>
+                                • Aceite de oliva<br>
+                                • Limón fresco
+                            </div>
+                            <div class="instructions">
+                                <strong>Preparación:</strong> Marina el pollo con hierbas y limón. Hornea con papas y cebolla a 180°C por 35 minutos hasta dorar.
+                            </div>
+                            <div class="benefits dinner">
+                                🍗 Proteínas completas para la recuperación muscular nocturna.
+                            </div>
+                        </div>
+
+                        <div class="recipe-item dinner">
+                            <div class="recipe-name dinner">🥘 Risotto de Champiñones</div>
+                            <div class="ingredients">
+                                • 1 taza de arroz arborio<br>
+                                • Champiñones mixtos<br>
+                                • Caldo de vegetales caliente<br>
+                                • Cebolla blanca<br>
+                                • Vino blanco (opcional)<br>
+                                • Queso parmesano
+                            </div>
+                            <div class="instructions">
+                                <strong>Preparación:</strong> Sofríe cebolla y champiñones. Agrega arroz, tuesta 2 min. Añade caldo de a poco, revuelve hasta cremoso.
+                            </div>
+                            <div class="benefits dinner">
+                                🥘 Carbohidratos complejos para una cena satisfactoria y reconfortante.
+                            </div>
+                        </div>
+
+                        <div class="recipe-item dinner">
+                            <div class="recipe-name dinner">🐟 Pescado con Puré de Coliflor</div>
+                            <div class="ingredients">
+                                • Filete de pescado blanco<br>
+                                • 1 coliflor mediana<br>
+                                • Leche descremada<br>
+                                • Mantequilla light<br>
+                                • Vegetales verdes al vapor<br>
+                                • Limón y perejil
+                            </div>
+                            <div class="instructions">
+                                <strong>Preparación:</strong> Cocina la coliflor y haz puré con leche. Cocina el pescado a la plancha con limón. Sirve con vegetales al vapor.
+                            </div>
+                            <div class="benefits dinner">
+                                🐟 Cena ligera pero nutritiva, perfecta para una buena digestión nocturna.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="closing-motivation">
+                <h3>✨ Recuerda Carol ✨</h3>
+                <p>"La disciplina con la alimentación se refleja en tu juego y en tu sonrisa. ¡Tú puedes con todo, flaca!"</p>
+                <p>"Cada comida saludable es un paso hacia la tenista extraordinaria que ya eres."</p>
+                <p>"Tu fuerza no solo está en tus brazos, sino en cada elección que haces en tu mesa. ¡Sigue brillando!"</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
